@@ -1,5 +1,5 @@
 import pygame
-from Player import Player
+from Assets.Player.Scripts.Player import Player
 
 player = Player(10, 5, 5, 6, 1)
 
@@ -9,8 +9,11 @@ def main():
     screen=pygame.display.set_mode((1280, 720))
     pygame.display.set_caption("Untitled")
     background=pygame.image.load("bg.png").convert()
+    background=pygame.transform.scale(background,(1280,720))
     running = True
+    framerate=pygame.time.Clock()
     while running:
+        framerate.tick(30)
         screen.blit(background,(0,0))
         running = CheckEvents()
         player.Update()

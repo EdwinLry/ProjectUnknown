@@ -1,5 +1,5 @@
 import pygame
-
+import Animation
 
 class Player:
     level = 1
@@ -9,7 +9,6 @@ class Player:
     inventory = list()
     magic = list()
     facing = True
-    length_height = (210, 500)
     transform = None
 
     def __init__(self, health, attack, phyDef, magDef, intelligence):
@@ -19,42 +18,44 @@ class Player:
         self.phyDef = phyDef
         self.magDef = magDef
         self.intelligence = intelligence
-        self.image = pygame.transform.scale(pygame.image.load('player.png'),(80,80))
+        self.image = pygame.transform.scale(pygame.image.load('Assets\Player\player.png'), (180, 180))
         self.rect = self.image.get_rect()
-        self.rect.midbottom = (100, 130)
+        print(self.rect.height)
+        self.rect.midbottom = (100, 600)
         self.vel_y = 0
         self.jumped = False
+        self.still = Animation.importFrames("Assets\Player\BlueWizard\\2BlueWizardIdle\\",180,180,19)
 
 
 
     def Update(self):
         x_move = 0
         y_move = 0
-
         key = pygame.key.get_pressed()
         if key[pygame.K_SPACE] and self.jumped is False:
-            self.vel_y = -10
+            self.vel_y = -40
             self.jumped = True
-        if not key[pygame.K_SPACE]:
-            self.jumped = False
         if key[pygame.K_a]:
-            x_move -= 1
+            x_move -= 8
             if self.facing:
-                self.image=pygame.transform.flip(self.image,True,False)
-                self.facing=False
+                self.facing = False
         if key[pygame.K_d]:
-            x_move += 1
+            x_move += 8
             if not self.facing:
-                self.image = pygame.transform.flip(self.image, True, False)
                 self.facing = True
-        self.vel_y += 0.3
-        if self.vel_y > 1:
-            self.vel_y = 1
+        self.vel_y += 5             # falling speed
+        if self.vel_y > 10:         # maximum falling speed
+            self.vel_y = 10
         y_move += self.vel_y
         self.rect.x += x_move
         self.rect.y += y_move
-        if(self.rect.bottom>300):
-            self.rect.bottom=300
+        if self.rect.bottom > 600:
+            self.jumped = False
+            self.rect.bottom = 600
+        self.still.update(pygame.time.get_ticks())
+        self.image=self.still.image
+        if not self.facing:
+            self.image = pygame.transform.flip(self.image, True, False)
 
     def Attack(self, monsters):
         # put animation here
@@ -96,5 +97,6 @@ class Player:
             self.health = self.maxHealth
 
     def GodMode(self):
-        self.health=1000000000
-        self.maxHealth=self.health
+        self.health = 1000000000
+        self.maxHealth = self.health
+
